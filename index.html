@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rodinný eKasa Skener</title>
-    <!-- Rýchla knižnica pre priamy prenos z kamery -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -35,12 +34,11 @@
     </div>
 
     <script>
-        // SEM VLOŽ SVOJU URL Z GOOGLE APPS SCRIPTU
+        // ⚠️ SEM VLOŽ SVOJU NOVÚ URL ADRESU Z GOOGLE APPS SCRIPTU
         const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqU7G2mu9pNj2ffvRWLE5X3GBWZPDbmVsvtqQ3y7D36JoD2rHWBnwYtwxFqrU9kTpgow/exec";
 
         let html5QrcodeScanner = null;
 
-        // Načítanie uloženého PINu po otvorení aplikácie
         document.addEventListener("DOMContentLoaded", () => {
             const ulozenyPin = localStorage.getItem("ekasa_pin");
             if(ulozenyPin) document.getElementById("pinCode").value = ulozenyPin;
@@ -57,7 +55,6 @@
         }
 
         function onScanSuccess(decodedText, decodedResult) {
-            // Zastavíme kameru po úspešnom načítaní, aby neodoslala kód 5x
             if (html5QrcodeScanner) {
                 html5QrcodeScanner.clear();
             }
@@ -69,19 +66,14 @@
                 return;
             }
 
-            // Uložíme PIN do pamäte pre ďalší nákup
             localStorage.setItem("ekasa_pin", pinZadany);
-            
-            zobraziSpravu("⏳ Kód načítaný. Zapájam AI a odosielam do Google Tabuľky...", 'info');
+            zobraziSpravu("⏳ Kód načítaný. Zapájam Gemini 3.5 Flash a zapisujem...", 'info');
             document.getElementById('restartBtn').style.display = 'none';
 
-            // Odoslanie do Google Apps Script
-            fetch(GOOGLE_WEB_APP_URL, {
-                method: 'POST',
-                // Pre oklamanie CORS blokovania použijeme text/plain prenos
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ qrText: decodedText, pin: pinZadany })
-            })
+            // NOVÝ, BEZPEČNÝ GET PRENOS CEZ URL PARAMETRE
+            const finalnaUrl = `${GOOGLE_WEB_APP_URL}?qrText=${encodeURIComponent(decodedText)}&pin=${encodeURIComponent(pinZadany)}`;
+
+            fetch(finalnaUrl, { method: 'GET' })
             .then(response => response.json())
             .then(data => {
                 if(data.status === 'success') {
@@ -92,7 +84,7 @@
                 document.getElementById('restartBtn').style.display = 'block';
             })
             .catch(error => {
-                zobraziSpravu("❌ Chyba spojenia s tabuľkou. Skúste neskôr.", 'error');
+                zobraziSpravu("❌ Nepodarilo sa spojiť s tabuľkou. Skontrolujte verziu nasadenia.", 'error');
                 document.getElementById('restartBtn').style.display = 'block';
             });
         }
