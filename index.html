@@ -67,7 +67,9 @@
             }
 
             localStorage.setItem("ekasa_pin", pinZadany);
-            zobraziSpravu("⏳ Kód načítaný. Zapájam Gemini 3.5 Flash a zapisujem...", 'info');
+            
+            // ---> TU JE OPRAVENÝ TEXT <---
+            zobraziSpravu("⏳ Kód načítaný. Zapájam Gemini 2.5 Flash a zapisujem...", 'info');
             document.getElementById('restartBtn').style.display = 'none';
 
             // NOVÝ, BEZPEČNÝ GET PRENOS CEZ URL PARAMETRE
@@ -84,9 +86,9 @@
                 document.getElementById('restartBtn').style.display = 'block';
             })
             .catch(error => {
-    zobraziSpravu("❌ Chyba spojenia: " + error.toString(), 'error');
-    document.getElementById('restartBtn').style.display = 'block';
-});
+                zobraziSpravu("❌ Chyba spojenia: " + error.toString(), 'error');
+                document.getElementById('restartBtn').style.display = 'block';
+            });
         }
 
         function startScanner() {
