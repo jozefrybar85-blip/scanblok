@@ -9,10 +9,12 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; box-sizing: border-box; }
         h2 { color: #1a73e8; margin-top: 0; }
-        #reader { width: 100%; margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 2px solid #e0e0e0; }
+        #reader { width: 100%; margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 2px solid #e0e0e0; background-color: #fafafa; }
+        /* NOVÉ: Štylovanie responzívneho video streamu z kamery */
+        #reader video { width: 100% !important; height: auto !important; border-radius: 6px; display: block; }
         .pin-container { margin-bottom: 20px; text-align: left; }
         .pin-container label { font-size: 14px; color: #555; font-weight: bold; }
-        .pin-container input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; }
+        .pin-container input, .pin-container select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; }
         #status { padding: 15px; border-radius: 8px; font-weight: bold; font-size: 15px; display: none; margin-bottom: 15px; line-height: 1.4; }
         .btn-restart { background: #1a73e8; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; display: none; }
         .btn-restart:hover { background: #1557b0; }
@@ -28,20 +30,33 @@
             <input type="password" id="pinCode" placeholder="Zadajte PIN pre povolenie zápisu">
         </div>
 
+        <div class="pin-container">
+            <label for="skenoval">Kto skenuje:</label>
+            <select id="skenoval">
+                <!-- ⚠️ SEM VLOŽTE VAŠE REÁLNE E-MAILY, KTORÝMI SA PRIHLASUJETE DO APPSHEETU -->
+                <option value="jozef@gmail.com">Jozef</option>
+                <option value="manzelka@gmail.com">Manželka</option>
+            </select>
+        </div>
+
         <div id="reader"></div>
         <div id="status"></div>
         <button id="restartBtn" class="btn-restart" onclick="startScanner()">Skenovať ďalší bloček</button>
     </div>
 
     <script>
-        // ⚠️ SEM VLOŽ SVOJU NOVÚ URL ADRESU Z GOOGLE APPS SCRIPTU
+        // URL adresa tvojej Google Webovej aplikácie
         const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyNjf87KQkSsebm6ivfkLhA96Y4PpR3UyuF1uyy6llCzsfht3SZtmHAiHJFu9LUqTOMEQ/exec";
 
-        let html5QrcodeScanner = null;
+        let html5QrCode = null;
 
         document.addEventListener("DOMContentLoaded", () => {
             const ulozenyPin = localStorage.getItem("ekasa_pin");
             if(ulozenyPin) document.getElementById("pinCode").value = ulozenyPin;
+            
+            const ulozenySkenoval = localStorage.getItem("ekasa_skenoval");
+            if(ulozenySkenoval) document.getElementById("skenoval").value = ulozenySkenoval;
+            
             startScanner();
         });
 
@@ -55,11 +70,23 @@
         }
 
         function onScanSuccess(decodedText, decodedResult) {
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.clear();
+            // Zastavíme kameru okamžite po úspešnom načítaní QR kódu (uvoľní sa video stream)
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    spracujKod(decodedText);
+                }).catch(err => {
+                    console.error("Nepodarilo sa zastaviť kameru: ", err);
+                    spracujKod(decodedText); // Aj tak pokračujeme v zápise
+                });
+            } else {
+                spracujKod(decodedText);
             }
-            
+        }
+
+        function spracujKod(decodedText) {
             const pinZadany = document.getElementById("pinCode").value;
+            const skenovalZadany = document.getElementById("skenoval").value;
+            
             if (!pinZadany) {
                 zobraziSpravu("❌ Zadajte bezpečnostný PIN pred skenovaním.", 'error');
                 document.getElementById('restartBtn').style.display = 'block';
@@ -67,13 +94,12 @@
             }
 
             localStorage.setItem("ekasa_pin", pinZadany);
-            
-            // ---> TU JE OPRAVENÝ TEXT <---
+            localStorage.setItem("ekasa_skenoval", skenovalZadany);
+
             zobraziSpravu("⏳ Kód načítaný. Zapájam Gemini 2.5 Flash a zapisujem...", 'info');
             document.getElementById('restartBtn').style.display = 'none';
 
-            // NOVÝ, BEZPEČNÝ GET PRENOS CEZ URL PARAMETRE
-            const finalnaUrl = `${GOOGLE_WEB_APP_URL}?qrText=${encodeURIComponent(decodedText)}&pin=${encodeURIComponent(pinZadany)}`;
+            const finalnaUrl = `${GOOGLE_WEB_APP_URL}?qrText=${encodeURIComponent(decodedText)}&pin=${encodeURIComponent(pinZadany)}&skenoval=${encodeURIComponent(skenovalZadany)}`;
 
             fetch(finalnaUrl, { method: 'GET' })
             .then(response => response.json())
@@ -95,13 +121,33 @@
             document.getElementById('status').style.display = 'none';
             document.getElementById('restartBtn').style.display = 'none';
             
-            html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+            if (html5QrCode) {
+                html5QrCode = null;
+            }
+
+            // Používame priamo čisté jadro Html5Qrcode bez predvoleného UI
+            html5QrCode = new Html5Qrcode("reader");
+            const config = { 
                 fps: 10, 
-                qrbox: {width: 250, height: 250},
-                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-            }, false);
-            
-            html5QrcodeScanner.render(onScanSuccess);
+                qrbox: {width: 250, height: 250}
+            };
+
+            // Spustíme rovno zadnú kameru (facingMode: "environment") bez pýtania sa na povolenia a typ kamery
+            html5QrCode.start(
+                { facingMode: "environment" }, // Pevne nastavená zadná kamera mobilu
+                config,
+                onScanSuccess
+            ).catch(err => {
+                console.warn("Zadná kamera nebola nájdená. Skúšam prednú webkameru...", err);
+                // Ak zlyhá zadná (napr. pri testovaní na PC), automaticky a bez chýb sa zapne predná kamera
+                html5QrCode.start(
+                    { facingMode: "user" }, 
+                    config,
+                    onScanSuccess
+                ).catch(e => {
+                    zobraziSpravu("❌ Nepodarilo sa spustiť kameru. Overte oprávnenia v prehliadači.", 'error');
+                });
+            });
         }
     </script>
 </body>
