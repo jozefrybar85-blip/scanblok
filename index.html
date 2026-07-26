@@ -46,7 +46,7 @@
             const ulozenyPin = localStorage.getItem("ekasa_pin");
             if(ulozenyPin) document.getElementById("pinCode").value = ulozenyPin;
             
-            // NOVÉ: Automatické prečítanie prihláseného e-mailu z URL parametra z AppSheetu
+            // Automatické prečítanie prihláseného e-mailu z URL parametra z AppSheetu
             const urlParams = new URLSearchParams(window.location.search);
             const skenovalFromUrl = urlParams.get('skenoval');
             
@@ -95,7 +95,8 @@
 
             localStorage.setItem("ekasa_pin", pinZadany);
 
-            zobraziSpravu("⏳ Kód načítaný. Zapájam Gemini 2.5 Flash a zapisujem...", 'info');
+            // UPRAVENÝ TEXT: Informovanie o novom modeli Gemini 3.6 Flash
+            zobraziSpravu("⏳ Kód načítaný. Zapájam Gemini 3.6 Flash a zapisujem...", 'info');
             document.getElementById('restartBtn').style.display = 'none';
 
             // Automaticky prikladáme prečítaný e-mail odosielateľa z AppSheetu
