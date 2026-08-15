@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="sk">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     >
 
-    <meta name="theme-color" content="#0b0d12">
+    <meta name="theme-color" content="#080a0f">
 
     <meta
         name="apple-mobile-web-app-capable"
@@ -20,7 +22,7 @@
         content="black-translucent"
     >
 
-    <title>eKasa • Rodinný skener</title>
+    <title>eKasa</title>
 
     <script
         src="https://unpkg.com/html5-qrcode"
@@ -28,1063 +30,1326 @@
     </script>
 
 
-    <style>
+<style>
 
-        /* =====================================================
-           RESET
-           ===================================================== */
+/* ============================================================
+   RESET
+   ============================================================ */
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
 
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100%;
-        }
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
 
-        body {
+body {
 
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Helvetica,
-                Arial,
-                sans-serif;
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
 
-            background:
-                radial-gradient(
-                    circle at 50% -10%,
-                    rgba(82, 112, 255, .18),
-                    transparent 42%
-                ),
-                #090b10;
+    color: #f7f8fb;
 
-            color: #f7f8fa;
+    background:
+        radial-gradient(
+            circle at 50% -15%,
+            rgba(92,108,255,.20),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 100% 80%,
+            rgba(72,82,180,.08),
+            transparent 35%
+        ),
+        #080a0f;
 
-            min-height: 100vh;
+    min-height: 100vh;
 
-            overflow-x: hidden;
-        }
+    overflow-x: hidden;
+}
 
 
-        /* =====================================================
-           APP
-           ===================================================== */
+/* ============================================================
+   APP SHELL
+   ============================================================ */
 
-        .app {
+.app {
 
-            width: 100%;
-            max-width: 620px;
+    width: 100%;
 
-            min-height: 100vh;
+    max-width: 680px;
 
-            margin: 0 auto;
+    min-height: 100vh;
 
-            padding:
-                max(18px, env(safe-area-inset-top))
-                18px
-                max(24px, env(safe-area-inset-bottom))
-                18px;
+    margin: auto;
 
-            display: flex;
-            flex-direction: column;
-        }
+    padding:
+        max(16px, env(safe-area-inset-top))
+        16px
+        max(18px, env(safe-area-inset-bottom))
+        16px;
 
+    display: flex;
 
-        /* =====================================================
-           HEADER
-           ===================================================== */
+    flex-direction: column;
+}
 
-        .topbar {
 
-            display: flex;
+/* ============================================================
+   HEADER
+   ============================================================ */
 
-            align-items: center;
+.header {
 
-            justify-content: space-between;
+    height: 54px;
 
-            margin-bottom: 20px;
-        }
+    display: flex;
 
+    align-items: center;
 
-        .brand {
+    justify-content: space-between;
 
-            display: flex;
+    margin-bottom: 10px;
+}
 
-            align-items: center;
 
-            gap: 12px;
-        }
+.logo {
 
+    display: flex;
 
-        .brand-icon {
+    align-items: center;
 
-            width: 44px;
-            height: 44px;
+    gap: 10px;
+}
 
-            border-radius: 14px;
 
-            display: flex;
+.logo-mark {
 
-            align-items: center;
-            justify-content: center;
+    width: 39px;
+    height: 39px;
 
-            background:
-                linear-gradient(
-                    145deg,
-                    #6678ff,
-                    #4354d9
-                );
+    border-radius: 13px;
 
-            box-shadow:
-                0 8px 24px
-                rgba(73, 91, 230, .30);
+    display: flex;
 
-            font-size: 21px;
-        }
+    align-items: center;
 
+    justify-content: center;
 
-        .brand-text {
+    background:
+        linear-gradient(
+            145deg,
+            #7182ff,
+            #4c5ce3
+        );
 
-            display: flex;
+    box-shadow:
+        0 8px 22px
+        rgba(79,94,232,.28);
 
-            flex-direction: column;
+    font-size: 18px;
 
-            gap: 2px;
-        }
+    font-weight: 800;
+}
 
 
-        .brand-title {
+.logo-name {
 
-            font-size: 18px;
+    font-size: 18px;
 
-            line-height: 1;
+    font-weight: 800;
 
-            font-weight: 750;
+    letter-spacing: -.04em;
+}
 
-            letter-spacing: -.02em;
-        }
 
+.logo-sub {
 
-        .brand-subtitle {
+    margin-top: 2px;
 
-            font-size: 12px;
+    color: #707887;
 
-            color: #8e95a3;
+    font-size: 10px;
 
-            letter-spacing: .01em;
-        }
+    letter-spacing: .03em;
+}
 
 
-        .online {
+.header-actions {
 
-            display: flex;
+    display: flex;
 
-            align-items: center;
+    align-items: center;
 
-            gap: 7px;
+    gap: 7px;
+}
 
-            padding:
-                8px
-                11px;
 
-            border-radius: 999px;
+/* ============================================================
+   HEADER BUTTONS
+   ============================================================ */
 
-            background:
-                rgba(255,255,255,.055);
+.icon-button {
 
-            border:
-                1px solid
-                rgba(255,255,255,.07);
+    width: 38px;
+    height: 38px;
 
-            color: #aeb5c2;
+    border: 1px solid
+        rgba(255,255,255,.07);
 
-            font-size: 11px;
+    border-radius: 12px;
 
-            font-weight: 600;
-        }
+    background:
+        rgba(255,255,255,.035);
 
+    color: #8f97a6;
 
-        .online-dot {
+    display: flex;
 
-            width: 7px;
-            height: 7px;
+    align-items: center;
 
-            border-radius: 50%;
+    justify-content: center;
 
-            background: #4ade80;
+    font-size: 16px;
 
-            box-shadow:
-                0 0 10px
-                rgba(74,222,128,.7);
-        }
+    cursor: pointer;
 
+    transition:
+        background .2s ease,
+        transform .15s ease;
+}
 
-        /* =====================================================
-           MAIN CARD
-           ===================================================== */
 
-        .main-card {
+.icon-button:active {
 
-            width: 100%;
+    transform: scale(.94);
 
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(255,255,255,.075),
-                    rgba(255,255,255,.035)
-                );
+    background:
+        rgba(255,255,255,.08);
+}
 
-            border:
-                1px solid
-                rgba(255,255,255,.09);
 
-            border-radius: 28px;
+.connection {
 
-            padding: 18px;
+    display: flex;
 
-            box-shadow:
-                0 24px 70px
-                rgba(0,0,0,.35),
+    align-items: center;
 
-                inset 0 1px 0
-                rgba(255,255,255,.05);
+    gap: 6px;
 
-            backdrop-filter:
-                blur(24px);
+    height: 34px;
 
-            -webkit-backdrop-filter:
-                blur(24px);
-        }
+    padding:
+        0
+        10px;
 
+    border-radius: 999px;
 
-        /* =====================================================
-           INTRO
-           ===================================================== */
+    border: 1px solid
+        rgba(255,255,255,.06);
 
-        .intro {
+    background:
+        rgba(255,255,255,.035);
 
-            text-align: left;
+    color: #7f8795;
 
-            margin:
-                2px
-                4px
-                17px;
-        }
+    font-size: 10px;
 
+    font-weight: 650;
+}
 
-        .intro-title {
 
-            margin: 0;
+.connection-dot {
 
-            font-size: 25px;
+    width: 6px;
+    height: 6px;
 
-            font-weight: 760;
+    border-radius: 50%;
 
-            letter-spacing: -.04em;
-        }
+    background: #4ade80;
 
+    box-shadow:
+        0 0 9px
+        rgba(74,222,128,.65);
+}
 
-        .intro-text {
 
-            margin:
-                7px
-                0
-                0;
+/* ============================================================
+   MAIN
+   ============================================================ */
 
-            color: #8f96a4;
+.main {
 
-            font-size: 13px;
+    flex: 1;
 
-            line-height: 1.5;
-        }
+    display: flex;
 
+    flex-direction: column;
+}
 
-        /* =====================================================
-           PIN
-           ===================================================== */
 
-        .pin-section {
+/* ============================================================
+   HERO
+   ============================================================ */
 
-            margin-bottom: 17px;
-        }
+.hero {
 
+    padding:
+        8px
+        4px
+        15px;
+}
 
-        .field-label {
 
-            display: flex;
+.eyebrow {
 
-            align-items: center;
+    color: #79819a;
 
-            justify-content: space-between;
+    font-size: 10px;
 
-            margin:
-                0
-                4px
-                7px;
+    font-weight: 700;
 
-            color: #aeb5c2;
+    text-transform: uppercase;
 
-            font-size: 12px;
+    letter-spacing: .14em;
 
-            font-weight: 650;
+    margin-bottom: 6px;
+}
 
-            letter-spacing: .01em;
-        }
 
+.hero-title {
 
-        .pin-wrap {
+    margin: 0;
 
-            position: relative;
-        }
+    font-size:
+        clamp(26px, 7vw, 34px);
 
+    line-height: 1.05;
 
-        .pin-icon {
+    letter-spacing: -.055em;
 
-            position: absolute;
+    font-weight: 800;
+}
 
-            left: 15px;
 
-            top: 50%;
+.hero-title span {
 
-            transform:
-                translateY(-50%);
+    color: #8997ff;
+}
 
-            font-size: 17px;
 
-            opacity: .75;
+.hero-description {
 
-            pointer-events: none;
-        }
+    margin:
+        8px
+        0
+        0;
 
+    max-width: 480px;
 
-        #pinCode {
+    color: #7f8795;
 
-            width: 100%;
+    font-size: 12px;
 
-            height: 52px;
+    line-height: 1.5;
+}
 
-            padding:
-                0
-                50px
-                0
-                45px;
 
-            border-radius: 16px;
+/* ============================================================
+   SCANNER CARD
+   ============================================================ */
 
-            border:
-                1px solid
-                rgba(255,255,255,.09);
+.scanner-card {
 
-            background:
-                rgba(0,0,0,.20);
+    position: relative;
 
-            color: #f7f8fa;
+    width: 100%;
 
-            outline: none;
+    overflow: hidden;
 
-            font-size: 16px;
+    border-radius: 30px;
 
-            letter-spacing: .15em;
+    background:
+        #030405;
 
-            transition:
-                border-color .2s ease,
-                box-shadow .2s ease,
-                background .2s ease;
-        }
+    border:
+        1px solid
+        rgba(255,255,255,.08);
 
+    box-shadow:
 
-        #pinCode::placeholder {
+        0 30px 80px
+        rgba(0,0,0,.38),
 
-            color: #606774;
+        inset 0 1px 0
+        rgba(255,255,255,.04);
+}
 
-            letter-spacing: 0;
-        }
 
+/* ============================================================
+   READER
+   ============================================================ */
 
-        #pinCode:focus {
+#reader {
 
-            border-color:
-                rgba(103,119,255,.75);
+    width: 100%;
 
-            background:
-                rgba(0,0,0,.28);
+    aspect-ratio: 1 / 1.12;
 
-            box-shadow:
-                0 0 0 4px
-                rgba(89,105,235,.12);
-        }
+    overflow: hidden;
 
+    background: #020304;
+}
 
-        .pin-toggle {
 
-            position: absolute;
+#reader video {
 
-            right: 8px;
+    width: 100% !important;
 
-            top: 8px;
+    height: 100% !important;
 
-            width: 36px;
-            height: 36px;
+    object-fit: cover !important;
 
-            border: none;
+    display: block;
 
-            border-radius: 11px;
+    border-radius: 29px;
+}
 
-            background:
-                transparent;
 
-            color: #8b92a0;
+/* ============================================================
+   CAMERA OVERLAY
+   ============================================================ */
 
-            font-size: 16px;
+.camera-overlay {
 
-            cursor: pointer;
-        }
+    position: absolute;
 
+    inset: 0;
 
-        .pin-toggle:active {
+    z-index: 10;
 
-            background:
-                rgba(255,255,255,.07);
-        }
+    pointer-events: none;
+}
 
 
-        /* =====================================================
-           CAMERA
-           ===================================================== */
+.dark-mask {
 
-        .scanner-label {
+    position: absolute;
 
-            display: flex;
+    inset: 0;
 
-            align-items: center;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.28),
+            transparent 30%,
+            transparent 65%,
+            rgba(0,0,0,.62)
+        );
+}
 
-            justify-content: space-between;
 
-            margin:
-                0
-                4px
-                8px;
-        }
+/* ============================================================
+   QR FRAME
+   ============================================================ */
 
+.scan-area {
 
-        .scanner-label-left {
+    position: absolute;
 
-            display: flex;
+    width: 68%;
 
-            align-items: center;
+    height: 68%;
 
-            gap: 7px;
+    left: 16%;
 
-            font-size: 12px;
+    top: 16%;
+}
 
-            font-weight: 650;
 
-            color: #aeb5c2;
-        }
+.scan-corner {
 
+    position: absolute;
 
-        .camera-status {
+    width: 32px;
 
-            font-size: 11px;
+    height: 32px;
 
-            color: #737b89;
-        }
+    border-color: #ffffff;
 
+    filter:
+        drop-shadow(
+            0 0 7px
+            rgba(125,140,255,.65)
+        );
+}
 
-        #reader {
 
-            position: relative;
+.scan-corner.tl {
 
-            width: 100%;
+    left: 0;
+    top: 0;
 
-            aspect-ratio: 1 / 1;
+    border-style: solid;
 
-            margin: 0;
+    border-width:
+        3px
+        0
+        0
+        3px;
 
-            overflow: hidden;
+    border-radius:
+        9px
+        0
+        0
+        0;
+}
 
-            border-radius: 22px;
 
-            background:
-                #030405;
+.scan-corner.tr {
 
-            border:
-                1px solid
-                rgba(255,255,255,.08);
+    right: 0;
+    top: 0;
 
-            box-shadow:
-                inset 0 0 0 1px
-                rgba(0,0,0,.25);
-        }
+    border-style: solid;
 
+    border-width:
+        3px
+        3px
+        0
+        0;
 
-        /*
-         * Video stream
-         */
+    border-radius:
+        0
+        9px
+        0
+        0;
+}
 
-        #reader video {
 
-            width: 100% !important;
+.scan-corner.bl {
 
-            height: 100% !important;
+    left: 0;
+    bottom: 0;
 
-            object-fit: cover !important;
+    border-style: solid;
 
-            border-radius: 21px;
+    border-width:
+        0
+        0
+        3px
+        3px;
 
-            display: block;
-        }
+    border-radius:
+        0
+        0
+        0
+        9px;
+}
 
 
-        /*
-         * HTML5 QRCode vloží vlastné UI.
-         * Minimalizujeme jeho vizuálne prvky.
-         */
+.scan-corner.br {
 
-        #reader img {
+    right: 0;
+    bottom: 0;
 
-            max-width: 100%;
-        }
+    border-style: solid;
 
+    border-width:
+        0
+        3px
+        3px
+        0;
 
-        #reader__dashboard {
+    border-radius:
+        0
+        0
+        9px
+        0;
+}
 
-            position: absolute !important;
 
-            left: 0 !important;
+/* ============================================================
+   SCAN LINE
+   ============================================================ */
 
-            right: 0 !important;
+.scan-line {
 
-            bottom: 0 !important;
+    position: absolute;
 
-            z-index: 10;
+    left: 3%;
 
-            background:
-                linear-gradient(
-                    transparent,
-                    rgba(0,0,0,.82)
-                ) !important;
+    width: 94%;
 
-            padding:
-                45px
-                12px
-                12px !important;
+    height: 2px;
 
-            color: white !important;
-        }
+    top: 4%;
 
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #94a2ff,
+            transparent
+        );
 
-        #reader__dashboard_section_csr {
+    box-shadow:
+        0 0 15px
+        rgba(111,130,255,.85);
 
-            margin: 0 !important;
-        }
+    animation:
+        scanning 2.3s
+        ease-in-out
+        infinite;
+}
 
 
-        #reader__dashboard_section_swaplink {
+@keyframes scanning {
 
-            color: #b9c0ff !important;
-        }
+    0% {
 
+        top: 5%;
 
-        #reader button {
+        opacity: 0;
+    }
 
-            border: none !important;
+    12% {
 
-            border-radius: 10px !important;
+        opacity: 1;
+    }
 
-            padding:
-                9px
-                13px !important;
+    50% {
 
-            background:
-                rgba(255,255,255,.12) !important;
+        opacity: 1;
+    }
 
-            color: white !important;
-        }
+    88% {
 
+        opacity: 1;
+    }
 
-        /*
-         * QR rámček.
-         *
-         * HTML5 QRCode používa element
-         * s id qr-shaded-region.
-         */
+    100% {
 
-        #qr-shaded-region {
+        top: 95%;
 
-            border:
-                none !important;
+        opacity: 0;
+    }
+}
 
-            box-shadow:
-                none !important;
-        }
 
+/* ============================================================
+   SCANNER BOTTOM BAR
+   ============================================================ */
 
-        /*
-         * Vlastný overlay.
-         */
+.scanner-bottom {
 
-        .camera-overlay {
+    position: absolute;
 
-            position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-            inset: 0;
+    z-index: 15;
 
-            pointer-events: none;
+    padding:
+        45px
+        17px
+        16px;
 
-            z-index: 5;
-        }
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(0,0,0,.88)
+        );
+}
 
 
-        .scan-frame {
+.scanner-status {
 
-            position: absolute;
+    display: flex;
 
-            width: 68%;
+    align-items: center;
 
-            height: 68%;
+    gap: 8px;
 
-            left: 16%;
+    font-size: 12px;
 
-            top: 16%;
+    color: #e4e7ed;
 
-            border-radius: 22px;
+    font-weight: 650;
+}
 
-            border:
-                1px solid
-                rgba(255,255,255,.12);
 
-            box-shadow:
-                0 0 0 9999px
-                rgba(0,0,0,.18);
-        }
+.scanner-status-dot {
 
+    width: 8px;
+    height: 8px;
 
-        /*
-         * Rohy skenovacieho rámu
-         */
+    border-radius: 50%;
 
-        .corner {
+    background: #8b9aff;
 
-            position: absolute;
+    box-shadow:
+        0 0 10px
+        rgba(139,154,255,.75);
 
-            width: 30px;
+    animation:
+        pulse 1.7s
+        ease-in-out
+        infinite;
+}
 
-            height: 30px;
 
-            border-color: #ffffff;
+@keyframes pulse {
 
-            border-style: solid;
+    0%,
+    100% {
 
-            filter:
-                drop-shadow(
-                    0 0 8px
-                    rgba(255,255,255,.25)
-                );
-        }
+        opacity: .45;
 
+        transform: scale(.85);
+    }
 
-        .corner.tl {
+    50% {
 
-            left: 16%;
-            top: 16%;
+        opacity: 1;
 
-            border-width:
-                3px
-                0
-                0
-                3px;
+        transform: scale(1);
+    }
+}
 
-            border-radius:
-                8px
-                0
-                0
-                0;
-        }
 
+.scanner-instruction {
 
-        .corner.tr {
+    margin-top: 4px;
 
-            right: 16%;
-            top: 16%;
+    color: #777f8d;
 
-            border-width:
-                3px
-                3px
-                0
-                0;
+    font-size: 10px;
+}
 
-            border-radius:
-                0
-                8px
-                0
-                0;
-        }
 
+/* ============================================================
+   HIDDEN HTML5 QR DASHBOARD
+   ============================================================ */
 
-        .corner.bl {
+#reader__dashboard {
 
-            left: 16%;
-            bottom: 16%;
+    position: absolute !important;
 
-            border-width:
-                0
-                0
-                3px
-                3px;
+    left: 0 !important;
 
-            border-radius:
-                0
-                0
-                0
-                8px;
-        }
+    right: 0 !important;
 
+    bottom: 0 !important;
 
-        .corner.br {
+    z-index: 30;
 
-            right: 16%;
-            bottom: 16%;
+    padding:
+        10px !important;
 
-            border-width:
-                0
-                3px
-                3px
-                0;
+    background:
+        rgba(0,0,0,.72) !important;
 
-            border-radius:
-                0
-                0
-                8px
-                0;
-        }
+    color: white !important;
+}
 
 
-        /*
-         * Skenovacia línia
-         */
+#reader__dashboard_section_csr {
 
-        .scan-line {
+    margin: 0 !important;
+}
 
-            position: absolute;
 
-            left: 18%;
+#reader button {
 
-            width: 64%;
+    border: none !important;
 
-            height: 2px;
+    border-radius: 10px !important;
 
-            top: 18%;
+    background:
+        rgba(255,255,255,.12) !important;
 
-            opacity: .8;
+    color: white !important;
 
-            background:
-                linear-gradient(
-                    90deg,
-                    transparent,
-                    #91a0ff,
-                    transparent
-                );
+    padding:
+        8px 12px !important;
+}
 
-            box-shadow:
-                0 0 12px
-                rgba(111,128,255,.75);
 
-            animation:
-                scanLine 2.4s
-                ease-in-out
-                infinite;
-        }
+#reader__dashboard_section_swaplink {
 
+    color: #aeb8ff !important;
+}
 
-        @keyframes scanLine {
 
-            0% {
-                top: 19%;
-                opacity: 0;
-            }
+/* ============================================================
+   RESULT
+   ============================================================ */
 
-            15% {
-                opacity: .9;
-            }
+#result {
 
-            50% {
-                opacity: 1;
-            }
+    display: none;
 
-            85% {
-                opacity: .9;
-            }
+    margin-top: 15px;
 
-            100% {
-                top: 81%;
-                opacity: 0;
-            }
-        }
+    padding: 19px;
 
+    border-radius: 22px;
 
-        /* =====================================================
-           INSTRUCTION
-           ===================================================== */
+    border:
+        1px solid
+        rgba(255,255,255,.08);
 
-        .scan-hint {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.065),
+            rgba(255,255,255,.025)
+        );
 
-            display: flex;
+    animation:
+        resultIn .35s ease;
+}
 
-            align-items: center;
 
-            justify-content: center;
+@keyframes resultIn {
 
-            gap: 8px;
+    from {
 
-            margin:
-                12px
-                0
-                0;
+        opacity: 0;
 
-            color: #858d9b;
+        transform:
+            translateY(12px)
+            scale(.98);
+    }
 
-            font-size: 12px;
-        }
+    to {
 
+        opacity: 1;
 
-        .scan-hint-icon {
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
 
-            width: 20px;
-            height: 20px;
 
-            display: flex;
+.result-top {
 
-            align-items: center;
-            justify-content: center;
+    display: flex;
 
-            border-radius: 7px;
+    align-items: center;
 
-            background:
-                rgba(255,255,255,.06);
-        }
+    gap: 13px;
 
+    margin-bottom: 14px;
+}
 
-        /* =====================================================
-           STATUS
-           ===================================================== */
 
-        #status {
+.result-icon {
 
-            display: none;
+    width: 46px;
+    height: 46px;
 
-            margin-top: 16px;
+    border-radius: 15px;
 
-            padding: 15px 16px;
+    display: flex;
 
-            border-radius: 16px;
+    align-items: center;
 
-            font-size: 13px;
+    justify-content: center;
 
-            line-height: 1.5;
+    background:
+        rgba(58,207,119,.12);
 
-            font-weight: 600;
+    border:
+        1px solid
+        rgba(58,207,119,.18);
 
-            border: 1px solid
-                rgba(255,255,255,.08);
+    color: #66e39a;
 
-            animation:
-                statusIn .25s ease;
-        }
+    font-size: 22px;
 
+    animation:
+        successPop .4s ease;
+}
 
-        @keyframes statusIn {
 
-            from {
+@keyframes successPop {
 
-                opacity: 0;
+    from {
 
-                transform:
-                    translateY(5px);
-            }
+        transform: scale(.5);
 
-            to {
+        opacity: 0;
+    }
 
-                opacity: 1;
+    70% {
 
-                transform:
-                    translateY(0);
-            }
-        }
+        transform: scale(1.1);
+    }
 
+    to {
 
-        /* =====================================================
-           RESTART BUTTON
-           ===================================================== */
+        transform: scale(1);
 
-        .btn-restart {
+        opacity: 1;
+    }
+}
 
-            width: 100%;
 
-            height: 54px;
+.result-title {
 
-            margin-top: 14px;
+    font-size: 15px;
 
-            border: none;
+    font-weight: 750;
+}
 
-            border-radius: 16px;
 
-            cursor: pointer;
+.result-subtitle {
 
-            color: white;
+    margin-top: 3px;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    #6678ff,
-                    #4c5ce0
-                );
+    color: #737b89;
 
-            box-shadow:
-                0 12px 30px
-                rgba(76,92,224,.28);
+    font-size: 10px;
+}
 
-            font-size: 15px;
 
-            font-weight: 700;
+.result-message {
 
-            letter-spacing: -.01em;
+    color: #c6cad2;
 
-            transition:
-                transform .15s ease,
-                box-shadow .15s ease,
-                filter .15s ease;
-        }
+    font-size: 12px;
 
+    line-height: 1.55;
+}
 
-        .btn-restart:hover {
 
-            filter:
-                brightness(1.08);
+/* ============================================================
+   STATUS / ERROR
+   ============================================================ */
 
-            box-shadow:
-                0 15px 35px
-                rgba(76,92,224,.36);
-        }
+#status {
 
+    display: none;
 
-        .btn-restart:active {
+    margin-top: 15px;
 
-            transform:
-                scale(.985);
-        }
+    padding: 16px;
 
+    border-radius: 18px;
 
-        .btn-icon {
+    font-size: 12px;
 
-            margin-right: 7px;
+    line-height: 1.5;
 
-            font-size: 17px;
+    font-weight: 600;
 
-            vertical-align: -1px;
-        }
+    animation:
+        resultIn .25s ease;
+}
 
 
-        /* =====================================================
-           FOOTER
-           ===================================================== */
+/* ============================================================
+   MAIN ACTION
+   ============================================================ */
 
-        .footer {
+#restartBtn {
 
-            margin-top: auto;
+    display: none;
 
-            padding-top: 18px;
+    width: 100%;
 
-            text-align: center;
+    height: 56px;
 
-            color: #565d69;
+    margin-top: 15px;
 
-            font-size: 10px;
+    border: none;
 
-            letter-spacing: .03em;
-        }
+    border-radius: 18px;
 
+    background:
+        linear-gradient(
+            135deg,
+            #7182ff,
+            #4d5ee3
+        );
 
-        /* =====================================================
-           MOBILE
-           ===================================================== */
+    color: white;
 
-        @media (max-width: 480px) {
+    font-size: 14px;
 
-            .app {
+    font-weight: 750;
 
-                padding-left: 13px;
-                padding-right: 13px;
-            }
+    box-shadow:
+        0 14px 34px
+        rgba(76,92,224,.27);
 
+    cursor: pointer;
 
-            .main-card {
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+}
 
-                border-radius: 25px;
 
-                padding: 14px;
-            }
+#restartBtn:active {
 
+    transform:
+        scale(.985);
+}
 
-            .intro-title {
 
-                font-size: 23px;
-            }
+#restartBtn:hover {
 
+    filter:
+        brightness(1.08);
+}
 
-            #reader {
 
-                border-radius: 20px;
-            }
+/* ============================================================
+   BOTTOM INFO
+   ============================================================ */
 
-        }
+.bottom-info {
 
+    display: flex;
 
-        /* =====================================================
-           SMALL HEIGHT
-           ===================================================== */
+    justify-content: center;
 
-        @media (
-            max-height: 700px
-        ) {
+    align-items: center;
 
-            .topbar {
+    gap: 7px;
 
-                margin-bottom: 12px;
-            }
+    padding:
+        15px
+        0
+        4px;
 
+    color: #4f5663;
 
-            .intro {
+    font-size: 9px;
 
-                margin-bottom: 11px;
-            }
+    letter-spacing: .04em;
+}
 
 
-            #reader {
+/* ============================================================
+   PIN MODAL
+   ============================================================ */
 
-                aspect-ratio: 1.12 / 1;
-            }
+.modal {
 
+    position: fixed;
 
-            .pin-section {
+    inset: 0;
 
-                margin-bottom: 11px;
-            }
+    z-index: 1000;
 
-        }
+    display: none;
 
-    </style>
+    align-items: flex-end;
+
+    justify-content: center;
+
+    padding:
+        14px;
+
+    background:
+        rgba(0,0,0,.65);
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+}
+
+
+.modal.show {
+
+    display: flex;
+}
+
+
+.modal-card {
+
+    width: 100%;
+
+    max-width: 500px;
+
+    padding: 21px;
+
+    border-radius: 25px;
+
+    background:
+        #15181f;
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    box-shadow:
+        0 -10px 60px
+        rgba(0,0,0,.4);
+
+    animation:
+        modalIn .25s ease;
+}
+
+
+@keyframes modalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(30px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+.modal-icon {
+
+    width: 46px;
+    height: 46px;
+
+    border-radius: 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(112,130,255,.12);
+
+    color: #9ca9ff;
+
+    font-size: 20px;
+
+    margin-bottom: 13px;
+}
+
+
+.modal-title {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    font-weight: 780;
+
+    letter-spacing: -.035em;
+}
+
+
+.modal-text {
+
+    margin:
+        7px
+        0
+        17px;
+
+    color: #7e8694;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.pin-modal-input {
+
+    width: 100%;
+
+    height: 52px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    background:
+        rgba(0,0,0,.22);
+
+    color: white;
+
+    outline: none;
+
+    padding:
+        0
+        15px;
+
+    font-size: 17px;
+
+    letter-spacing: .16em;
+}
+
+
+.pin-modal-input:focus {
+
+    border-color:
+        rgba(111,130,255,.7);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(111,130,255,.10);
+}
+
+
+.modal-actions {
+
+    display: flex;
+
+    gap: 9px;
+
+    margin-top: 12px;
+}
+
+
+.modal-btn {
+
+    flex: 1;
+
+    height: 50px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.modal-cancel {
+
+    background:
+        rgba(255,255,255,.06);
+
+    color: #9aa1ad;
+}
+
+
+.modal-save {
+
+    background:
+        linear-gradient(
+            135deg,
+            #7182ff,
+            #4d5ee3
+        );
+
+    color: white;
+}
+
+
+/* ============================================================
+   DESKTOP
+   ============================================================ */
+
+@media (min-width: 700px) {
+
+    .app {
+
+        padding-top: 28px;
+
+        padding-bottom: 28px;
+    }
+
+
+    .scanner-card {
+
+        border-radius: 32px;
+    }
+
+
+    #reader {
+
+        aspect-ratio: 1 / .95;
+    }
+
+
+    .modal {
+
+        align-items: center;
+    }
+
+}
+
+
+/* ============================================================
+   SMALL PHONES
+   ============================================================ */
+
+@media (max-height: 700px) {
+
+    .header {
+
+        margin-bottom: 2px;
+    }
+
+
+    .hero {
+
+        padding-bottom: 9px;
+    }
+
+
+    .hero-title {
+
+        font-size: 25px;
+    }
+
+
+    #reader {
+
+        aspect-ratio: 1 / .88;
+    }
+
+
+    .bottom-info {
+
+        padding-top: 9px;
+    }
+
+}
+
+</style>
+
 </head>
 
 
@@ -1094,26 +1359,27 @@
 <div class="app">
 
 
-    <!-- =====================================================
+    <!-- ========================================================
          HEADER
-         ===================================================== -->
+         ======================================================== -->
 
-    <header class="topbar">
+    <header class="header">
 
-        <div class="brand">
 
-            <div class="brand-icon">
-                ⌁
+        <div class="logo">
+
+            <div class="logo-mark">
+                e
             </div>
 
-            <div class="brand-text">
+            <div>
 
-                <div class="brand-title">
+                <div class="logo-name">
                     eKasa
                 </div>
 
-                <div class="brand-subtitle">
-                    Rodinný skener
+                <div class="logo-sub">
+                    RODINNÝ SKENER
                 </div>
 
             </div>
@@ -1121,149 +1387,130 @@
         </div>
 
 
-        <div class="online">
+        <div class="header-actions">
 
-            <span class="online-dot"></span>
 
-            Pripravené
+            <div class="connection">
+
+                <span class="connection-dot"></span>
+
+                Online
+
+            </div>
+
+
+            <button
+                class="icon-button"
+                type="button"
+                onclick="openPinSettings()"
+                aria-label="Nastavenie PIN"
+            >
+
+                🔒
+
+            </button>
+
 
         </div>
 
     </header>
 
 
-    <!-- =====================================================
+    <!-- ========================================================
          MAIN
-         ===================================================== -->
+         ======================================================== -->
 
-    <main class="main-card">
+    <main class="main">
 
 
-        <!-- INTRO -->
+        <section class="hero">
 
-        <section class="intro">
+            <div class="eyebrow">
+                Rýchle načítanie
+            </div>
 
-            <h1 class="intro-title">
-                Naskenujte bloček
+            <h1 class="hero-title">
+
+                Naskenujte
+                <span>bloček.</span>
+
             </h1>
 
-            <p class="intro-text">
-                Namierte zadnú kameru na QR kód
-                dokladu a nechajte zvyšok na aplikáciu.
+            <p class="hero-description">
+
+                Namierte kameru na QR kód.
+                Údaje sa načítajú a uložia automaticky.
+
             </p>
 
         </section>
 
 
-        <!-- PIN -->
+        <!-- ====================================================
+             SCANNER
+             ==================================================== -->
 
-        <section class="pin-section">
-
-            <div class="field-label">
-
-                <span>
-                    Bezpečnostný PIN
-                </span>
-
-                <span>
-                    Chránený zápis
-                </span>
-
-            </div>
+        <section class="scanner-card">
 
 
-            <div class="pin-wrap">
-
-                <span class="pin-icon">
-                    🔐
-                </span>
+            <div id="reader"></div>
 
 
-                <input
-                    type="password"
-                    id="pinCode"
-                    placeholder="Zadajte PIN"
-                    autocomplete="off"
-                    inputmode="numeric"
-                >
+            <div class="camera-overlay">
 
 
-                <button
-                    type="button"
-                    class="pin-toggle"
-                    id="pinToggle"
-                    aria-label="Zobraziť PIN"
-                    onclick="togglePin()"
-                >
-                    ◉
-                </button>
-
-            </div>
-
-        </section>
+                <div class="dark-mask"></div>
 
 
-        <!-- CAMERA -->
+                <div class="scan-area">
 
-        <section>
+                    <div class="scan-corner tl"></div>
 
-            <div class="scanner-label">
+                    <div class="scan-corner tr"></div>
 
-                <div class="scanner-label-left">
+                    <div class="scan-corner bl"></div>
 
-                    <span>▣</span>
-
-                    <span>
-                        QR skener
-                    </span>
-
-                </div>
-
-
-                <span
-                    class="camera-status"
-                    id="cameraStatus"
-                >
-                    Kamera sa pripravuje
-                </span>
-
-            </div>
-
-
-            <div id="reader">
-
-                <div class="camera-overlay">
-
-                    <div class="scan-frame"></div>
-
-                    <div class="corner tl"></div>
-                    <div class="corner tr"></div>
-                    <div class="corner bl"></div>
-                    <div class="corner br"></div>
+                    <div class="scan-corner br"></div>
 
                     <div class="scan-line"></div>
 
                 </div>
 
+
+                <div class="scanner-bottom">
+
+                    <div class="scanner-status">
+
+                        <span
+                            class="scanner-status-dot"
+                            id="scannerDot"
+                        ></span>
+
+                        <span id="cameraStatus">
+                            Spúšťam kameru…
+                        </span>
+
+                    </div>
+
+
+                    <div class="scanner-instruction">
+
+                        Zarovnajte QR kód do rámčeka
+
+                    </div>
+
+                </div>
+
+
             </div>
 
-
-            <div class="scan-hint">
-
-                <span class="scan-hint-icon">
-                    ✦
-                </span>
-
-                <span>
-                    Zarovnajte QR kód do rámčeka
-                </span>
-
-            </div>
 
         </section>
 
 
-        <!-- STATUS -->
+        <!-- ====================================================
+             STATUS
+             ==================================================== -->
 
         <div
             id="status"
@@ -1272,19 +1519,59 @@
         ></div>
 
 
-        <!-- RESTART -->
+        <!-- ====================================================
+             RESULT
+             ==================================================== -->
+
+        <div id="result">
+
+
+            <div class="result-top">
+
+
+                <div class="result-icon">
+
+                    ✓
+
+                </div>
+
+
+                <div>
+
+                    <div class="result-title">
+                        Bloček uložený
+                    </div>
+
+                    <div class="result-subtitle">
+                        Údaje boli úspešne odoslané
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                class="result-message"
+                id="resultMessage"
+            ></div>
+
+
+        </div>
+
+
+        <!-- ====================================================
+             NEXT
+             ==================================================== -->
 
         <button
             id="restartBtn"
-            class="btn-restart"
+            type="button"
             onclick="startScanner()"
         >
 
-            <span class="btn-icon">
-                ↻
-            </span>
-
-            Skenovať ďalší bloček
+            ↻ &nbsp; Skenovať ďalší bloček
 
         </button>
 
@@ -1292,12 +1579,90 @@
     </main>
 
 
-    <footer class="footer">
+    <div class="bottom-info">
 
-        eKasa • Rodinný skener
+        <span>eKasa</span>
 
-    </footer>
+        <span>•</span>
 
+        <span>Rodinný skener</span>
+
+    </div>
+
+
+</div>
+
+
+<!-- ============================================================
+     PIN MODAL
+     ============================================================ -->
+
+<div
+    class="modal"
+    id="pinModal"
+>
+
+
+    <div class="modal-card">
+
+
+        <div class="modal-icon">
+            🔐
+        </div>
+
+
+        <h2 class="modal-title">
+            Bezpečnostný PIN
+        </h2>
+
+
+        <p class="modal-text">
+
+            PIN je uložený iba v tomto zariadení
+            a používa sa automaticky pri zápise bločku.
+
+        </p>
+
+
+        <input
+            id="pinModalInput"
+            class="pin-modal-input"
+            type="password"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="Zadajte PIN"
+        >
+
+
+        <div class="modal-actions">
+
+
+            <button
+                class="modal-btn modal-cancel"
+                type="button"
+                onclick="closePinSettings()"
+            >
+
+                Zrušiť
+
+            </button>
+
+
+            <button
+                class="modal-btn modal-save"
+                type="button"
+                onclick="savePin()"
+            >
+
+                Uložiť PIN
+
+            </button>
+
+
+        </div>
+
+
+    </div>
 
 </div>
 
@@ -1305,376 +1670,479 @@
 
 <script>
 
-    /* =========================================================
-       KONFIGURÁCIA
-       ========================================================= */
+/* ============================================================
+   KONFIGURÁCIA
+   ============================================================ */
 
 
-    const GOOGLE_WEB_APP_URL =
-        "https://script.google.com/macros/s/AKfycbyNjf87KQkSsebm6ivfkLhA96Y4PpR3UyuF1uyy6llCzsfht3SZtmHAiHJFu9LUqTOMEQ/exec";
+/*
+ * Tvoja existujúca Google Apps Script Web App.
+ *
+ * Funkcionalitu nemeníme.
+ */
+
+const GOOGLE_WEB_APP_URL =
+    "https://script.google.com/macros/s/AKfycbyNjf87KQkSsebm6ivfkLhA96Y4PpR3UyuF1uyy6llCzsfht3SZtmHAiHJFu9LUqTOMEQ/exec";
 
 
-    let html5QrCode = null;
+/* ============================================================
+   PREMENNÉ
+   ============================================================ */
 
-    let skenovalUzivatel = "Neznámy";
+let html5QrCode = null;
+
+let skenovalUzivatel = "Neznámy";
+
+let scannerRunning = false;
 
 
-    /* =========================================================
-       ELEMENTY
-       ========================================================= */
+/* ============================================================
+   ELEMENTY
+   ============================================================ */
+
+const statusDiv =
+    document.getElementById(
+        "status"
+    );
 
 
-    const pinInput =
-        document.getElementById(
-            "pinCode"
+const resultDiv =
+    document.getElementById(
+        "result"
+    );
+
+
+const resultMessage =
+    document.getElementById(
+        "resultMessage"
+    );
+
+
+const restartBtn =
+    document.getElementById(
+        "restartBtn"
+    );
+
+
+const cameraStatus =
+    document.getElementById(
+        "cameraStatus"
+    );
+
+
+const scannerDot =
+    document.getElementById(
+        "scannerDot"
+    );
+
+
+const pinModal =
+    document.getElementById(
+        "pinModal"
+    );
+
+
+const pinModalInput =
+    document.getElementById(
+        "pinModalInput"
+    );
+
+
+/* ============================================================
+   START
+   ============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+
+        /*
+         * Používateľ z AppSheet URL.
+         */
+
+        const urlParams =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const skenovalFromUrl =
+            urlParams.get(
+                "skenoval"
+            );
+
+
+        if (skenovalFromUrl) {
+
+            skenovalUzivatel =
+                skenovalFromUrl;
+
+
+            localStorage.setItem(
+                "ekasa_skenoval",
+                skenovalUzivatel
+            );
+
+        }
+
+        else {
+
+            skenovalUzivatel =
+                localStorage.getItem(
+                    "ekasa_skenoval"
+                ) ||
+                "Neznámy";
+
+        }
+
+
+        /*
+         * Ak PIN ešte neexistuje,
+         * zobrazíme jeho nastavenie.
+         *
+         * Potom už PIN na hlavnej obrazovke
+         * vôbec nebude viditeľný.
+         */
+
+        const pin =
+            localStorage.getItem(
+                "ekasa_pin"
+            );
+
+
+        if (!pin) {
+
+            openPinSettings();
+
+        }
+
+        else {
+
+            startScanner();
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   PIN – OTVORENIE
+   ============================================================ */
+
+function openPinSettings() {
+
+    const existingPin =
+        localStorage.getItem(
+            "ekasa_pin"
         );
 
 
-    const statusDiv =
-        document.getElementById(
-            "status"
-        );
+    pinModalInput.value =
+        existingPin || "";
 
 
-    const restartBtn =
-        document.getElementById(
-            "restartBtn"
-        );
+    pinModal.classList.add(
+        "show"
+    );
 
 
-    const cameraStatus =
-        document.getElementById(
-            "cameraStatus"
-        );
-
-
-    /* =========================================================
-       START
-       ========================================================= */
-
-
-    document.addEventListener(
-        "DOMContentLoaded",
+    setTimeout(
         () => {
 
-            /*
-             * Načítanie uloženého PINu
-             */
+            pinModalInput.focus();
 
-            const ulozenyPin =
+        },
+        180
+    );
+
+}
+
+
+/* ============================================================
+   PIN – ZATVORENIE
+   ============================================================ */
+
+function closePinSettings() {
+
+    pinModal.classList.remove(
+        "show"
+    );
+
+
+    const pin =
+        localStorage.getItem(
+            "ekasa_pin"
+        );
+
+
+    /*
+     * Ak PIN existuje,
+     * pokračujeme skenerom.
+     */
+
+    if (pin) {
+
+        startScanner();
+
+    }
+
+}
+
+
+/* ============================================================
+   PIN – ULOŽENIE
+   ============================================================ */
+
+function savePin() {
+
+    const pin =
+        pinModalInput.value.trim();
+
+
+    if (!pin) {
+
+        pinModalInput.focus();
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "ekasa_pin",
+        pin
+    );
+
+
+    pinModal.classList.remove(
+        "show"
+    );
+
+
+    startScanner();
+
+}
+
+
+/* ============================================================
+   PIN MODAL – KLIKNUTIE MIMO
+   ============================================================ */
+
+pinModal.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            pinModal
+        ) {
+
+            const pin =
                 localStorage.getItem(
                     "ekasa_pin"
                 );
 
 
-            if (ulozenyPin) {
+            if (pin) {
 
-                pinInput.value =
-                    ulozenyPin;
-
-            }
-
-
-            /*
-             * Používateľ z AppSheetu
-             */
-
-            const urlParams =
-                new URLSearchParams(
-                    window.location.search
-                );
-
-
-            const skenovalFromUrl =
-                urlParams.get(
-                    "skenoval"
-                );
-
-
-            if (skenovalFromUrl) {
-
-                skenovalUzivatel =
-                    skenovalFromUrl;
-
-
-                localStorage.setItem(
-                    "ekasa_skenoval",
-                    skenovalUzivatel
-                );
+                closePinSettings();
 
             }
-
-            else {
-
-                skenovalUzivatel =
-                    localStorage.getItem(
-                        "ekasa_skenoval"
-                    ) ||
-                    "Neznámy";
-
-            }
-
-
-            /*
-             * Automatické spustenie.
-             */
-
-            startScanner();
-
-        }
-    );
-
-
-    /* =========================================================
-       PIN – ZOBRAZIŤ / SKRYŤ
-       ========================================================= */
-
-
-    function togglePin() {
-
-        const toggle =
-            document.getElementById(
-                "pinToggle"
-            );
-
-
-        if (
-            pinInput.type ===
-            "password"
-        ) {
-
-            pinInput.type =
-                "text";
-
-            toggle.textContent =
-                "◌";
-
-            toggle.setAttribute(
-                "aria-label",
-                "Skryť PIN"
-            );
-
-        }
-
-        else {
-
-            pinInput.type =
-                "password";
-
-            toggle.textContent =
-                "◉";
-
-            toggle.setAttribute(
-                "aria-label",
-                "Zobraziť PIN"
-            );
 
         }
 
     }
+);
 
 
-    /* =========================================================
-       STATUS
-       ========================================================= */
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+function zobraziSpravu(
+    text,
+    typ
+) {
+
+    statusDiv.style.display =
+        "block";
 
 
-    function zobraziSpravu(
-        text,
-        typ
+    statusDiv.innerHTML =
+        text;
+
+
+    if (
+        typ === "info"
     ) {
 
-        statusDiv.style.display =
-            "block";
+        statusDiv.style.background =
+            "rgba(91,110,255,.11)";
 
+        statusDiv.style.color =
+            "#b7c0ff";
 
-        statusDiv.innerHTML =
-            text;
-
-
-        /*
-         * INFO
-         */
-
-        if (
-            typ === "info"
-        ) {
-
-            statusDiv.style.background =
-                "rgba(82, 103, 255, .12)";
-
-            statusDiv.style.color =
-                "#b7c0ff";
-
-            statusDiv.style.borderColor =
-                "rgba(103,119,255,.20)";
-
-        }
-
-
-        /*
-         * SUCCESS
-         */
-
-        if (
-            typ === "success"
-        ) {
-
-            statusDiv.style.background =
-                "rgba(48, 194, 112, .11)";
-
-            statusDiv.style.color =
-                "#70e0a0";
-
-            statusDiv.style.borderColor =
-                "rgba(48,194,112,.20)";
-
-        }
-
-
-        /*
-         * ERROR
-         */
-
-        if (
-            typ === "error"
-        ) {
-
-            statusDiv.style.background =
-                "rgba(255, 82, 82, .10)";
-
-            statusDiv.style.color =
-                "#ff9292";
-
-            statusDiv.style.borderColor =
-                "rgba(255,82,82,.20)";
-
-        }
+        statusDiv.style.border =
+            "1px solid rgba(103,119,255,.18)";
 
     }
 
 
-    /* =========================================================
-       QR – ÚSPEŠNÉ SKENOVANIE
-       ========================================================= */
-
-
-    function onScanSuccess(
-        decodedText,
-        decodedResult
+    if (
+        typ === "success"
     ) {
 
-        /*
-         * Zastavíme kameru okamžite.
-         */
+        statusDiv.style.background =
+            "rgba(50,205,120,.10)";
 
-        if (html5QrCode) {
+        statusDiv.style.color =
+            "#70e0a0";
 
-            html5QrCode
-                .stop()
-
-                .then(
-                    () => {
-
-                        spracujKod(
-                            decodedText
-                        );
-
-                    }
-                )
-
-                .catch(
-                    err => {
-
-                        console.error(
-                            "Nepodarilo sa zastaviť kameru:",
-                            err
-                        );
-
-
-                        spracujKod(
-                            decodedText
-                        );
-
-                    }
-                );
-
-        }
-
-        else {
-
-            spracujKod(
-                decodedText
-            );
-
-        }
+        statusDiv.style.border =
+            "1px solid rgba(50,205,120,.18)";
 
     }
 
 
-    /* =========================================================
-       SPRACOVANIE QR
-       ========================================================= */
-
-
-    function spracujKod(
-        decodedText
+    if (
+        typ === "error"
     ) {
 
-        const pinZadany =
-            pinInput.value;
+        statusDiv.style.background =
+            "rgba(255,75,75,.10)";
+
+        statusDiv.style.color =
+            "#ff9292";
+
+        statusDiv.style.border =
+            "1px solid rgba(255,75,75,.18)";
+
+    }
+
+}
 
 
-        /*
-         * PIN nie je zadaný.
-         */
+/* ============================================================
+   SKRYŤ STATUS
+   ============================================================ */
 
-        if (!pinZadany) {
+function skryStatus() {
 
-            zobraziSpravu(
-                "🔐 Zadajte bezpečnostný PIN pred skenovaním.",
-                "error"
+    statusDiv.style.display =
+        "none";
+
+}
+
+
+/* ============================================================
+   QR ÚSPECH
+   ============================================================ */
+
+function onScanSuccess(
+    decodedText,
+    decodedResult
+) {
+
+    /*
+     * Ochrana pred dvojitým načítaním.
+     */
+
+    if (!scannerRunning) {
+
+        return;
+
+    }
+
+
+    scannerRunning =
+        false;
+
+
+    /*
+     * Okamžite vypneme animáciu bodky.
+     */
+
+    scannerDot.style.animation =
+        "none";
+
+
+    cameraStatus.textContent =
+        "Kód načítaný";
+
+
+    /*
+     * Zastavíme kameru.
+     */
+
+    if (html5QrCode) {
+
+        html5QrCode
+            .stop()
+
+            .then(
+                () => {
+
+                    spracujKod(
+                        decodedText
+                    );
+
+                }
+            )
+
+            .catch(
+                error => {
+
+                    console.warn(
+                        "Kamera sa nepodarila zastaviť:",
+                        error
+                    );
+
+
+                    spracujKod(
+                        decodedText
+                    );
+
+                }
             );
 
+    }
 
-            restartBtn.style.display =
-                "block";
+    else {
+
+        spracujKod(
+            decodedText
+        );
+
+    }
+
+}
 
 
-            cameraStatus.textContent =
-                "Čaká sa na PIN";
+/* ============================================================
+   SPRACOVANIE QR
+   ============================================================ */
 
+function spracujKod(
+    decodedText
+) {
 
-            return;
-
-        }
-
-
-        /*
-         * Uloženie PINu.
-         */
-
-        localStorage.setItem(
-            "ekasa_pin",
-            pinZadany
+    const pinZadany =
+        localStorage.getItem(
+            "ekasa_pin"
         );
 
 
-        /*
-         * Stav kamery.
-         */
+    /*
+     * Bez PINu sa nepokračuje.
+     */
 
-        cameraStatus.textContent =
-            "Spracovanie…";
-
-
-        /*
-         * Stav UI.
-         */
+    if (!pinZadany) {
 
         zobraziSpravu(
-            "⏳ Spracovávam bloček…",
-            "info"
+            "🔐 Bezpečnostný PIN nie je nastavený.",
+            "error"
         );
 
 
@@ -1682,90 +2150,332 @@
             "none";
 
 
-        /*
-         * URL požiadavky.
-         */
+        openPinSettings();
 
-        const finalnaUrl =
+        return;
 
-            `${GOOGLE_WEB_APP_URL}` +
-
-            `?qrText=` +
-
-            `${encodeURIComponent(decodedText)}` +
-
-            `&pin=` +
-
-            `${encodeURIComponent(pinZadany)}` +
-
-            `&skenoval=` +
-
-            `${encodeURIComponent(skenovalUzivatel)}`;
+    }
 
 
-        /*
-         * Odoslanie.
-         */
+    /*
+     * Skryjeme predchádzajúci výsledok.
+     */
 
-        fetch(
-            finalnaUrl,
-            {
-                method: "GET"
+    resultDiv.style.display =
+        "none";
+
+
+    restartBtn.style.display =
+        "none";
+
+
+    /*
+     * Stav.
+     */
+
+    cameraStatus.textContent =
+        "Spracovávam bloček…";
+
+
+    zobraziSpravu(
+        "⏳ Spracovávam bloček…",
+        "info"
+    );
+
+
+    /*
+     * URL.
+     */
+
+    const finalnaUrl =
+
+        `${GOOGLE_WEB_APP_URL}` +
+
+        `?qrText=` +
+
+        `${encodeURIComponent(decodedText)}` +
+
+        `&pin=` +
+
+        `${encodeURIComponent(pinZadany)}` +
+
+        `&skenoval=` +
+
+        `${encodeURIComponent(skenovalUzivatel)}`;
+
+
+    /*
+     * API.
+     */
+
+    fetch(
+        finalnaUrl,
+        {
+            method: "GET"
+        }
+    )
+
+    .then(
+        response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " +
+                    response.status
+                );
+
             }
-        )
-
-        .then(
-            response => {
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Server odpovedal HTTP " +
-                        response.status
-                    );
-
-                }
 
 
-                return response.json();
+            return response.json();
 
-            }
-        )
+        }
+    )
 
-        .then(
-            data => {
+    .then(
+        data => {
 
-                if (
-                    data.status ===
-                    "success"
-                ) {
+            if (
+                data.status ===
+                "success"
+            ) {
 
-                    zobraziSpravu(
-                        data.message,
-                        "success"
-                    );
+                /*
+                 * Úspech.
+                 */
 
-                    cameraStatus.textContent =
-                        "✓ Hotovo";
-
-                }
-
-                else {
-
-                    zobraziSpravu(
-                        data.message ||
-                        "Bloček sa nepodarilo spracovať.",
-                        "error"
-                    );
-
-                    cameraStatus.textContent =
-                        "Spracovanie zlyhalo";
-
-                }
+                skryStatus();
 
 
-                restartBtn.style.display =
+                resultMessage.innerHTML =
+                    data.message ||
+                    "Údaje boli úspešne uložené.";
+
+
+                resultDiv.style.display =
                     "block";
+
+
+                cameraStatus.textContent =
+                    "✓ Bloček uložený";
+
+
+                scannerDot.style.background =
+                    "#55e38a";
+
+
+                scannerDot.style.boxShadow =
+                    "0 0 12px rgba(85,227,138,.75)";
+
+
+            }
+
+            else {
+
+                /*
+                 * Chyba.
+                 */
+
+                zobraziSpravu(
+
+                    "⚠️ " +
+
+                    (
+                        data.message ||
+                        "Bloček sa nepodarilo spracovať."
+                    ),
+
+                    "error"
+
+                );
+
+
+                cameraStatus.textContent =
+                    "Spracovanie zlyhalo";
+
+
+                scannerDot.style.background =
+                    "#ff6f6f";
+
+                scannerDot.style.boxShadow =
+                    "0 0 12px rgba(255,111,111,.65)";
+
+            }
+
+
+            restartBtn.style.display =
+                "block";
+
+        }
+    )
+
+    .catch(
+        error => {
+
+            console.error(
+                error
+            );
+
+
+            zobraziSpravu(
+
+                "❌ Nepodarilo sa spojiť so serverom.<br>" +
+
+                "<small>" +
+
+                escapeHtml(
+                    error.toString()
+                ) +
+
+                "</small>",
+
+                "error"
+
+            );
+
+
+            cameraStatus.textContent =
+                "Chyba spojenia";
+
+
+            scannerDot.style.background =
+                "#ff6f6f";
+
+
+            scannerDot.style.boxShadow =
+                "0 0 12px rgba(255,111,111,.65)";
+
+
+            restartBtn.style.display =
+                "block";
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   SPUSTENIE SKENERA
+   ============================================================ */
+
+function startScanner() {
+
+    /*
+     * Reset UI.
+     */
+
+    skryStatus();
+
+
+    resultDiv.style.display =
+        "none";
+
+
+    restartBtn.style.display =
+        "none";
+
+
+    scannerDot.style.background =
+        "#8b9aff";
+
+
+    scannerDot.style.boxShadow =
+        "0 0 10px rgba(139,154,255,.75)";
+
+
+    scannerDot.style.animation =
+        "pulse 1.7s ease-in-out infinite";
+
+
+    cameraStatus.textContent =
+        "Spúšťam kameru…";
+
+
+    /*
+     * Existujúci scanner.
+     */
+
+    if (
+        html5QrCode
+    ) {
+
+        try {
+
+            html5QrCode.clear();
+
+        }
+
+        catch (error) {
+
+            console.warn(
+                error
+            );
+
+        }
+
+
+        html5QrCode =
+            null;
+
+    }
+
+
+    /*
+     * Nový scanner.
+     */
+
+    html5QrCode =
+        new Html5Qrcode(
+            "reader"
+        );
+
+
+    const config = {
+
+        fps: 10,
+
+        qrbox: {
+            width: 250,
+            height: 250
+        },
+
+        aspectRatio: 1.0,
+
+        disableFlip: false
+
+    };
+
+
+    /*
+     * Zadná kamera.
+     */
+
+    html5QrCode
+
+        .start(
+
+            {
+                facingMode:
+                    "environment"
+            },
+
+            config,
+
+            onScanSuccess
+
+        )
+
+        .then(
+            () => {
+
+                scannerRunning =
+                    true;
+
+
+                cameraStatus.textContent =
+                    "Pripravené na skenovanie";
 
             }
         )
@@ -1773,224 +2483,101 @@
         .catch(
             error => {
 
-                console.error(
+                console.warn(
+                    "Zadná kamera:",
                     error
                 );
 
 
-                zobraziSpravu(
-                    "❌ Chyba spojenia:<br>" +
-                    escapeHtml(
-                        error.toString()
-                    ),
-                    "error"
-                );
-
-
                 cameraStatus.textContent =
-                    "Chyba spojenia";
+                    "Skúšam inú kameru…";
 
 
-                restartBtn.style.display =
-                    "block";
+                /*
+                 * Fallback.
+                 */
+
+                html5QrCode
+
+                    .start(
+
+                        {
+                            facingMode:
+                                "user"
+                        },
+
+                        config,
+
+                        onScanSuccess
+
+                    )
+
+                    .then(
+                        () => {
+
+                            scannerRunning =
+                                true;
+
+
+                            cameraStatus.textContent =
+                                "Pripravené na skenovanie";
+
+                        }
+                    )
+
+                    .catch(
+                        cameraError => {
+
+                            scannerRunning =
+                                false;
+
+
+                            console.error(
+                                cameraError
+                            );
+
+
+                            cameraStatus.textContent =
+                                "Kamera nedostupná";
+
+
+                            scannerDot.style.background =
+                                "#ff6f6f";
+
+
+                            scannerDot.style.boxShadow =
+                                "0 0 12px rgba(255,111,111,.65)";
+
+
+                            zobraziSpravu(
+
+                                "📷 Nepodarilo sa spustiť kameru.<br><br>" +
+
+                                "Skontrolujte oprávnenie kamery " +
+                                "v prehliadači.",
+
+                                "error"
+
+                            );
+
+                        }
+                    );
 
             }
         );
 
-    }
+}
 
 
-    /* =========================================================
-       SPUSTENIE SCANNERU
-       ========================================================= */
+/* ============================================================
+   HTML ESCAPE
+   ============================================================ */
 
+function escapeHtml(
+    value
+) {
 
-    function startScanner() {
-
-        /*
-         * Reset UI.
-         */
-
-        statusDiv.style.display =
-            "none";
-
-
-        restartBtn.style.display =
-            "none";
-
-
-        cameraStatus.textContent =
-            "Spúšťam kameru…";
-
-
-        /*
-         * Existujúci scanner.
-         */
-
-        if (
-            html5QrCode
-        ) {
-
-            try {
-
-                html5QrCode.clear();
-
-            }
-
-            catch (e) {
-
-                console.warn(
-                    "Scanner clear:",
-                    e
-                );
-
-            }
-
-
-            html5QrCode =
-                null;
-
-        }
-
-
-        /*
-         * Nový scanner.
-         */
-
-        html5QrCode =
-            new Html5Qrcode(
-                "reader"
-            );
-
-
-        /*
-         * Konfigurácia.
-         */
-
-        const config = {
-
-            fps: 10,
-
-            qrbox: {
-                width: 250,
-                height: 250
-            },
-
-            aspectRatio: 1.0,
-
-            disableFlip: false
-
-        };
-
-
-        /*
-         * Zadná kamera.
-         */
-
-        html5QrCode
-
-            .start(
-
-                {
-                    facingMode:
-                        "environment"
-                },
-
-                config,
-
-                onScanSuccess
-
-            )
-
-            .then(
-                () => {
-
-                    cameraStatus.textContent =
-                        "Pripravené na skenovanie";
-
-                }
-            )
-
-            .catch(
-                err => {
-
-                    console.warn(
-                        "Zadná kamera nebola dostupná:",
-                        err
-                    );
-
-
-                    cameraStatus.textContent =
-                        "Skúšam kameru…";
-
-
-                    /*
-                     * Záložná predná kamera.
-                     */
-
-                    html5QrCode
-
-                        .start(
-
-                            {
-                                facingMode:
-                                    "user"
-                            },
-
-                            config,
-
-                            onScanSuccess
-
-                        )
-
-                        .then(
-                            () => {
-
-                                cameraStatus.textContent =
-                                    "Pripravené na skenovanie";
-
-                            }
-                        )
-
-                        .catch(
-                            error => {
-
-                                console.error(
-                                    error
-                                );
-
-
-                                cameraStatus.textContent =
-                                    "Kamera nedostupná";
-
-
-                                zobraziSpravu(
-                                    "❌ Nepodarilo sa spustiť kameru.<br><br>" +
-                                    "Overte oprávnenie kamery v prehliadači.",
-                                    "error"
-                                );
-
-                            }
-                        );
-
-                }
-            );
-
-    }
-
-
-    /* =========================================================
-       HTML ESCAPE
-       ========================================================= */
-
-
-    function escapeHtml(
-        value
-    ) {
-
-        return String(
-            value
-        )
+    return String(value)
 
         .replace(
             /&/g,
@@ -2017,10 +2604,10 @@
             "&#039;"
         );
 
-    }
+}
 
 </script>
 
-
 </body>
+
 </html>
